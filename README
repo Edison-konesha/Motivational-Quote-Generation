@@ -1,0 +1,17 @@
+THIS FILE CONTAINS INSTRUCTIONS HOW TO RUN THE MOTIVATIONAL QUOTE GENERATION PROJECT
+
+1 - RUNNING THE SYSTEM ON THE BROWSER
+
+1. Download the projects file and open it on a IDE
+2. Open up the app.py which contains the flask app to be loaded on the browser
+3. open the terminal and type python app.py
+4. In your browser, please copy and paste the link on a browser after you have run the model "http://127.0.0.1:5000"
+   You should see the motivational quotes page.
+5. Click the "Generate" button to generate a new quote.
+6. If the server or application encounters an error and needs to be reset, click the "Restart" button to reload the model of the quotes gen
+
+2 - RUNNING THE SYSTEM ON THE TERMINAL
+
+1. Open up the MAIN.PY file
+2. simply just run the file as a python file on a IDE clicking the run button
+3. The system should start generating Quotes with predicted emotions.

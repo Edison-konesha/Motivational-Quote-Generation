@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Motivational Quotes</title>
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+
+        img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+
+        #quoteContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 30px;
+        }
+
+
+        #emotion, #quote {
+            margin-bottom: 20px;
+            font-size: 44px;
+            font-weight: bold;
+            color: #00008B;
+        }
+
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<img id="emotionImage">
+<div id="quoteContainer">
+    <h2 id="emotion"></h2>
+    <p id="quote"></p>
+    <!-- buttons to generate a new quote and restart the page -->
+    <button id="generateButton">Generate</button>
+    <button id="restartButton">Restart</button>
+</div>
+
+<script>
+    // track the current day  and loading status of the page
+    let currentDay = 0;
+    let loading = true;
+
+    // get the quote of the day from the backend
+    async function getQuote(day) {
+        let response = await fetch(`/get_quote/${day}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    // load the quote of the day generated form the backend code
+    async function loadQuote() {
+        try {
+            let data = await getQuote(currentDay);
+            // Setting the text content of the quote and emotion elements
+            document.getElementById('quote').textContent = data.motivational_quote;
+            document.getElementById('emotion').textContent = data.predicted_emotion;
+            // Setting the source of the emotion image based on the flask notation
+            document.getElementById('emotionImage').src = `/static/${data.predicted_emotion}.jpg`;
+            currentDay++;
+        } catch (error) {
+            // default message when the generation of the quotes is over
+            document.getElementById('quote').textContent = 'No more quotes available. Please restart the model or change the testing file to predict new emotions and generate quotes in relation to them.';
+            document.getElementById('emotion').textContent = '';
+        }
+    }
+
+    // check the loading status on the browser
+    async function checkLoading() {
+        if (loading) {
+            try {
+                let response = await fetch(`/get_quote/0`);
+                if (response.ok) {
+                    loading = false;
+                    loadQuote();
+                } else {
+                    setTimeout(checkLoading, 1000);  // check again in 1 second
+                }
+            } catch (error) {
+                setTimeout(checkLoading, 1000);  // check again in 1 second
+            }
+        }
+    }
+
+    // Event listeners for the buttons
+    document.getElementById('generateButton').addEventListener('click', loadQuote);
+    document.getElementById('restartButton').addEventListener('click', () => location.reload());
+    // run the function to check the loading status when the page loads
+    checkLoading();
+</script>
+</body>
+</html>
